@@ -1,0 +1,122 @@
+Q1 Program to Check Hamiltonian Cycle
+#include <stdio.h>
+
+#define N 4
+
+int graph[N][N] = {
+    {0,1,1,1},
+    {1,0,1,0},
+    {1,1,0,1},
+    {1,0,1,0}
+};
+
+int path[N];
+
+// Check if vertex can be added
+int isSafe(int v, int pos) {
+    // Check adjacency
+    if (graph[path[pos - 1]][v] == 0)
+        return 0;
+
+    // Check if already visited
+    for (int i = 0; i < pos; i++)
+        if (path[i] == v)
+            return 0;
+
+    return 1;
+}
+
+// Hamiltonian Cycle function
+int hamCycle(int pos) {
+    if (pos == N) {
+        if (graph[path[pos - 1]][path[0]] == 1)
+            return 1;
+        else
+            return 0;
+    }
+
+    for (int v = 1; v < N; v++) {
+        if (isSafe(v, pos)) {
+            path[pos] = v;
+
+            if (hamCycle(pos + 1))
+                return 1;
+
+            path[pos] = -1; // backtrack
+        }
+    }
+    return 0;
+}
+
+int main() {
+    path[0] = 0;
+
+    for (int i = 1; i < N; i++)
+        path[i] = -1;
+
+    if (hamCycle(1)) {
+        printf("Hamiltonian Cycle exists:\n");
+        for (int i = 0; i < N; i++)
+            printf("%d ", path[i]);
+        printf("%d\n", path[0]); // return to start
+    } else {
+        printf("No Hamiltonian Cycle\n");
+    }
+
+    return 0;
+}
+Q2 4-Queens Board Configuration
+#include <stdio.h>
+#include <stdlib.h>
+
+#define N 4
+
+int board[N];
+
+// Check safe position
+int isSafe(int row, int col) {
+    for(int i = 0; i < row; i++) {
+        // Same column
+        if(board[i] == col)
+            return 0;
+
+        // Diagonal check
+        if(abs(board[i] - col) == abs(i - row))
+            return 0;
+    }
+    return 1;
+}
+
+// Print board configuration
+void printBoard() {
+    for(int i = 0; i < N; i++) {
+        for(int j = 0; j < N; j++) {
+            if(board[i] == j)
+                printf("Q ");
+            else
+                printf(". ");
+        }
+        printf("\n");
+    }
+    printf("\n");
+}
+
+// Backtracking function
+void solve(int row) {
+    if(row == N) {
+        printBoard();
+        return;
+    }
+
+    for(int col = 0; col < N; col++) {
+        if(isSafe(row, col)) {
+            board[row] = col;
+            solve(row + 1);
+        }
+    }
+}
+
+int main() {
+    solve(0);
+    return 0;
+}
