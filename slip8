@@ -1,0 +1,119 @@
+S8 Q1
+Write a program to implement Fractional Knapsack problems using Greedy Method
+program
+#include <stdio.h>
+struct Item {
+int value;
+int weight;
+float ratio;
+};
+void swap(struct Item *a, struct Item *b) {
+struct Item temp = *a;
+*a = *b;
+*b = temp;
+}
+void sortItems(struct Item items[], int n) {
+for (int i = 0; i < n - 1; i++) {
+for (int j = 0; j < n - i - 1; j++) {
+if (items[j].ratio < items[j + 1].ratio) {
+swap(&items[j], &items[j + 1]);
+}
+}
+}
+}
+float knapsack(int capacity, struct Item items[], int n) {
+sortItems(items, n);
+float totalValue = 0.0;
+int remainingCapacity = capacity;
+for (int i = 0; i < n; i++) {
+if (items[i].weight <= remainingCapacity) {
+totalValue += items[i].value;
+remainingCapacity -= items[i].weight;
+} else {
+totalValue += (float)items[i].value * remainingCapacity / items[i].weight;
+break;
+}
+}
+return totalValue;
+}
+int main() {
+int n, capacity;
+printf("Enter the number of items: ");
+
+scanf("%d", &n);
+struct Item items[n];
+printf("Enter the capacity of the knapsack: ");
+scanf("%d", &capacity);
+printf("Enter the value and weight of each item:\n");
+for (int i = 0; i < n; i++) {
+printf("Item %d:\n", i + 1);
+printf("Value: ");
+scanf("%d", &items[i].value);
+printf("Weight: ");
+scanf("%d", &items[i].weight);
+items[i].ratio = (float)items[i].value / items[i].weight;
+}
+float maxValue = knapsack(capacity, items, n);
+printf("Maximum value in the knapsack: %.2f\n", maxValue);
+return 0;
+}
+
+
+
+S8 Q2
+Write Program to implement Traveling Salesman Problem using nearest neighbor algorithm
+program
+#include <stdio.h>
+#include <limits.h>
+
+#define V 4 // Number of vertices in the graph
+
+int graph[V][V] = {
+{0, 10, 15, 20},
+{10, 0, 35, 25},
+{15, 35, 0, 30},
+{20, 25, 30, 0}
+};
+
+int visited[V];
+
+int findNearestNeighbor(int current) {
+int minDistance = INT_MAX;
+int nearestNeighbor = -1;
+
+for (int i = 0; i < V; i++) {
+if (!visited[i] && graph[current][i] < minDistance) {
+minDistance = graph[current][i];
+nearestNeighbor = i;
+}
+}
+
+return nearestNeighbor;
+}
+
+void travelSalesman() {
+visited[0] = 1; // Starting from the first city
+
+printf("Path: 1 ");
+
+for (int i = 1; i < V; i++) {
+int nearestNeighbor = findNearestNeighbor(i - 1);
+visited[nearestNeighbor] = 1;
+printf("-> %d ", nearestNeighbor + 1);
+}
+
+printf("-> 1\n"); // Return to the starting city to complete the cycle
+}
+
+int main() {
+// Initialize visited array
+for (int i = 0; i < V; i++) {
+visited[i] = 0;
+}
+
+printf("Optimal TSP Path:\n");
+travelSalesman();
+
+return 0;
+}
+
