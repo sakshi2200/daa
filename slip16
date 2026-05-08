@@ -1,0 +1,114 @@
+Q1   0/1 Knapsack (Dynamic Programming)
+#include <stdio.h>
+
+int max(int a, int b) {
+    return (a > b) ? a : b;
+}
+
+int main() {
+    int n, W;
+
+    printf("Enter number of items: ");
+    scanf("%d", &n);
+
+    int wt[n], val[n];
+
+    printf("Enter weights:\n");
+    for(int i = 0; i < n; i++)
+        scanf("%d", &wt[i]);
+
+    printf("Enter profits:\n");
+    for(int i = 0; i < n; i++)
+        scanf("%d", &val[i]);
+
+    printf("Enter knapsack capacity: ");
+    scanf("%d", &W);
+
+    int K[n+1][W+1];
+
+    // Build DP table
+    for(int i = 0; i <= n; i++) {
+        for(int w = 0; w <= W; w++) {
+            if(i == 0 || w == 0)
+                K[i][w] = 0;
+            else if(wt[i-1] <= w)
+                K[i][w] = max(val[i-1] + K[i-1][w - wt[i-1]], K[i-1][w]);
+            else
+                K[i][w] = K[i-1][w];
+        }
+    }
+
+    printf("Maximum Profit = %d\n", K[n][W]);
+
+    return 0;
+}
+Q2 Hamiltonian Cycle Problem
+#include <stdio.h>
+
+#define N 5
+
+int graph[N][N] = {
+    {0,1,0,1,0},
+    {1,0,1,1,1},
+    {0,1,0,0,1},
+    {1,1,0,0,1},
+    {0,1,1,1,0}
+};
+
+int path[N];
+
+// Check if vertex can be added
+int isSafe(int v, int pos) {
+    // Check adjacency
+    if (graph[path[pos - 1]][v] == 0)
+        return 0;
+
+    // Check already visited
+    for (int i = 0; i < pos; i++)
+        if (path[i] == v)
+            return 0;
+
+    return 1;
+}
+
+// Recursive function
+int hamiltonian(int pos) {
+    if (pos == N) {
+        // Check last to first connection
+        if (graph[path[pos - 1]][path[0]] == 1)
+            return 1;
+        else
+            return 0;
+    }
+
+    for (int v = 1; v < N; v++) {
+        if (isSafe(v, pos)) {
+            path[pos] = v;
+
+            if (hamiltonian(pos + 1) == 1)
+                return 1;
+
+            path[pos] = -1; // backtrack
+        }
+    }
+    return 0;
+}
+
+int main() {
+    path[0] = 0; // start from vertex 0
+
+    for (int i = 1; i < N; i++)
+        path[i] = -1;
+
+    if (hamiltonian(1) == 1) {
+        printf("Hamiltonian Cycle exists:\n");
+        for (int i = 0; i < N; i++)
+            printf("%d ", path[i]);
+
+        printf("%d\n", path[0]); // return to start
+    } else {
+        printf("No Hamiltonian Cycle\n");
+    }
+
+    return 0;
+}
